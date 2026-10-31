@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#f8eee6">
+<title>給媽媽的驚喜</title>
+
+<script>
+/* ==========================================
+   只要修改這一區的內容就好
+   文字請保留前後的 ` 符號,裡面可以直接換行
+   ========================================== */
+const CONTENT = {
+  // 打開前顯示的小字
+  cover: `有一份禮物要給妳`,
+
+  // 主標題
+  title: `媽媽，生日快樂`,
+
+  // 祝福文字
+  message: `（請把這段換成你想對媽媽說的話）
+
+可以直接換行,
+像這樣分成好幾段。`,
+
+  // 署名
+  signature: `愛妳的孩子`,
+
+  // YouTube 影片連結,貼在兩個 ` 中間;還沒有影片就先留空
+  // 例如 `https://youtu.be/abcdefghijk`
+  video: ``,
+};
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f8eee6;
+    --card: #fffaf5;
+    --ink: #4a2f2a;
+    --soft: #8a6a60;
+    --rose: #b8485a;
+    --rose-dark: #94364a;
+    --line: #ecd8cb;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Noto Serif TC", "PingFang TC", "Microsoft JhengHei", serif;
+    font-size: 19px;
+    line-height: 1.9;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* 封面 */
+  .cover {
+    position: fixed; inset: 0; z-index: 2;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 28px; padding: 24px; width: 100%;
+    background: var(--paper); border: 0; color: inherit; font: inherit;
+    cursor: pointer; transition: opacity .7s ease, visibility .7s;
+  }
+  .cover p { margin: 0; font-size: 22px; letter-spacing: .08em; }
+  .envelope {
+    position: relative; width: 196px; height: 134px;
+    background: var(--card); border: 2px solid var(--rose); border-radius: 8px;
+    overflow: hidden; animation: float 2.6s ease-in-out infinite;
+  }
+  .envelope::before {
+    content: ""; position: absolute; left: 50%; top: -74px;
+    width: 138px; height: 138px; margin-left: -69px;
+    background: #fbe6e0; border: 2px solid var(--rose);
+    transform: rotate(45deg);
+  }
+  .seal {
+    position: absolute; left: 50%; top: 50px; z-index: 1;
+    width: 40px; height: 40px; margin-left: -20px;
+    display: grid; place-items: center;
+    background: var(--rose); border-radius: 50%; color: #fff; font-size: 20px; line-height: 1;
+  }
+  .hint {
+    padding: 10px 26px; border-radius: 999px;
+    background: var(--rose); color: #fff; font-size: 18px; letter-spacing: .1em;
+  }
+  body.open .cover { opacity: 0; visibility: hidden; pointer-events: none; }
+  @keyframes float { 50% { transform: translateY(-8px); } }
+
+  /* 內容 */
+  main {
+    max-width: 620px; margin: 0 auto;
+    padding: 48px 16px calc(56px + env(safe-area-inset-bottom));
+    opacity: 0; transform: translateY(16px);
+    transition: opacity .9s ease .3s, transform .9s ease .3s;
+  }
+  body.open main { opacity: 1; transform: none; }
+  h1 {
+    margin: 0 0 28px; text-align: center; color: var(--rose-dark);
+    font-size: clamp(30px, 8.5vw, 42px); font-weight: 600; line-height: 1.35; letter-spacing: .06em;
+  }
+  .video {
+    position: relative; aspect-ratio: 16 / 9; overflow: hidden;
+    background: #3a2622; border-radius: 12px;
+  }
+  .video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .video.empty {
+    display: grid; place-items: center; padding: 16px; text-align: center;
+    background: var(--card); border: 1px dashed var(--rose); color: var(--soft);
+  }
+  .open-link { margin: 10px 0 0; text-align: center; font-size: 15px; }
+  .open-link a { color: var(--rose-dark); }
+  .letter {
+    margin-top: 28px; padding: 28px 24px;
+    background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+  }
+  .letter p { margin: 0; white-space: pre-line; overflow-wrap: anywhere; }
+  .letter .sign { margin-top: 24px; text-align: right; color: var(--rose-dark); font-weight: 600; }
+
+  /* 飄落的愛心 */
+  .heart {
+    position: fixed; top: -32px; z-index: 1; pointer-events: none; color: var(--rose);
+    animation: fall linear forwards;
+  }
+  @keyframes fall {
+    to { transform: translate(var(--drift), 112vh) rotate(var(--turn)); opacity: .15; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .envelope { animation: none; }
+    .cover, main { transition: none; }
+  }
+</style>
+</head>
+<body>
+  <button class="cover" id="cover" type="button">
+    <p id="coverText"></p>
+    <span class="envelope" aria-hidden="true"><span class="seal">♥</span></span>
+    <span class="hint">輕觸打開</span>
+  </button>
+
+  <main>
+    <h1 id="title"></h1>
+    <div class="video" id="video"></div>
+    <p class="open-link" id="openLink" hidden><a id="videoLink" target="_blank" rel="noopener">影片播不出來？點這裡開啟</a></p>
+    <section class="letter">
+      <p id="message"></p>
+      <p class="sign" id="signature"></p>
+    </section>
+  </main>
+
+<script>
+  document.getElementById("coverText").textContent = CONTENT.cover;
+  document.getElementById("title").textContent = CONTENT.title;
+  document.getElementById("message").textContent = CONTENT.message.trim();
+  document.getElementById("signature").textContent = CONTENT.signature;
+  document.title = CONTENT.title;
+
+  function youtubeId(link) {
+    const match = link.trim().match(
+      /(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|live\/))([\w-]{11})/
+    );
+    return match ? match[1] : null;
+  }
+
+  const box = document.getElementById("video");
+  const id = youtubeId(CONTENT.video);
+  if (id) {
+    const frame = document.createElement("iframe");
+    frame.src = "https://www.youtube-nocookie.com/embed/" + id + "?playsinline=1&rel=0";
+    frame.title = "生日影片";
+    frame.allow = "autoplay; encrypted-media; picture-in-picture; fullscreen";
+    frame.allowFullscreen = true;
+    frame.referrerPolicy = "strict-origin-when-cross-origin";
+    box.appendChild(frame);
+    document.getElementById("videoLink").href = "https://youtu.be/" + id;
+    document.getElementById("openLink").hidden = false;
+  } else {
+    box.classList.add("empty");
+    box.textContent = "影片快來了，再等我一下";
+  }
+
+  function hearts() {
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    for (let i = 0; i < 26; i++) {
+      const heart = document.createElement("span");
+      heart.className = "heart";
+      heart.textContent = "♥";
+      heart.setAttribute("aria-hidden", "true");
+      heart.style.left = Math.random() * 100 + "vw";
+      heart.style.fontSize = 12 + Math.random() * 16 + "px";
+      heart.style.animationDuration = 3 + Math.random() * 3 + "s";
+      heart.style.animationDelay = Math.random() * 1.6 + "s";
+      heart.style.setProperty("--drift", (Math.random() * 100 - 50) + "px");
+      heart.style.setProperty("--turn", (Math.random() * 360 - 180) + "deg");
+      heart.addEventListener("animationend", () => heart.remove());
+      document.body.appendChild(heart);
+    }
+  }
+
+  document.getElementById("cover").addEventListener("click", () => {
+    document.body.classList.add("open");
+    hearts();
+  }, { once: true });
+</script>
+</body>
+</html>
